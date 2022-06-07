@@ -46,33 +46,26 @@ The `.tfnames` file maps the vector output of Tensorflow to human-readable names
 If you need more data to train your tensorflow model, log in via the Web IDE
 then upload the following code:
 
-```
-// ******* Gesture collecting code ********
+```// ******* Gesture collecting code ********
 name="Gesture";
-event_acc="left_acc"; //file name for acclerometer data
-event_mag="left_mag"; //file name for magnetometer data
+event="Event Name"; //file name for accelerometer data + magnetometer data
 
 
 var fname = 1;
 
 function gotGesture(d) {
   
-  var f = require("Storage").open(event_acc + "." + fname + ".csv", "a");
-  var g = require("Storage").open(event_mag + "." + fname + ".csv", "a");
+  var f = require("Storage").open(event + "." + fname + ".csv", "a");
 
-  print("timestamp, x, y, z");
-  //print(d);
-  
-  f.write("timestamp, x, y, z\n");
-  g.write("timestamp, mx, my, mz, mdx, mdy, mdz\n");
+  print("timestamp, x, y, z, mx, my, mz, mdx, mdy, mdz");
+
+  f.write("timestamp, x, y, z, mx, my, mz, mdx, mdy, mdz\n");
   
   for (var j=0;j<d.length;j+=3) {
-    print(j +", ", d[j] + ", " + d[j+1] + ", " + d[j+2] );
-    f.write(j + ", " + d[j] + ", " + d[j+1] + ", " + d[j+2] +"\n" );
-    c= Bangle.getCompass(); //c for compass
-    g.write(j +"," + c.x +"," + c.y +"," + c.z +"," + c.dx +"," + c.dy +"," + c.dz);}
-  print("timestamp, mx, my, mz, mdx, mdy, mdz");
-  print(j +"," + c.x +"," + c.y +"," + c.z +"," + c.dx +"," + c.dy +"," + c.dz);
+    c= Bangle.getCompass(); //compass
+    print(j +", ", d[j] + ", " + d[j+1] + ", " + d[j+2]+"," + c.x +"," + c.y +"," + c.z +"," + c.dx +"," + c.dy +"," + c.dz );
+    f.write(j + ", " + d[j] + ", " + d[j+1] + ", " + d[j+2] +"," + c.x +"," + c.y +"," + c.z +"," + c.dx +"," + c.dy +"," + c.dz +"\n" );
+  }
 
   //if you want your display to have the graph of acceleration uncomment the following part
   /*g.clear();
