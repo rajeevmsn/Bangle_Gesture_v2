@@ -47,11 +47,35 @@ If you need more data to train your tensorflow model, log in via the Web IDE
 then upload the following code:
 
 ```
+// ******* Gesture collecting code ********
 name="Gesture";
+event_acc="left_acc"; //file name for acclerometer data
+event_mag="left_mag"; //file name for magnetometer data
 
-function gotGesture(d) {  
-  print(name+"("+d.length/3+"),",d.slice().join(","));
-  g.clear();
+
+var fname = 1;
+
+function gotGesture(d) {
+  
+  var f = require("Storage").open(event_acc + "." + fname + ".csv", "a");
+  var g = require("Storage").open(event_mag + "." + fname + ".csv", "a");
+
+  print("timestamp, x, y, z");
+  //print(d);
+  
+  f.write("timestamp, x, y, z\n");
+  g.write("timestamp, mx, my, mz, mdx, mdy, mdz\n");
+  
+  for (var j=0;j<d.length;j+=3) {
+    print(j +", ", d[j] + ", " + d[j+1] + ", " + d[j+2] );
+    f.write(j + ", " + d[j] + ", " + d[j+1] + ", " + d[j+2] +"\n" );
+    c= Bangle.getCompass(); //c for compass
+    g.write(j +"," + c.x +"," + c.y +"," + c.z +"," + c.dx +"," + c.dy +"," + c.dz);}
+  print("timestamp, mx, my, mz, mdx, mdy, mdz");
+  print(j +"," + c.x +"," + c.y +"," + c.z +"," + c.dx +"," + c.dy +"," + c.dz);
+
+  //if you want your display to have the graph of acceleration uncomment the following part
+  /*g.clear();
   g.setColor(1,1,1);
   var my = g.getHeight()/2;
   var sy = my/128;
@@ -64,8 +88,9 @@ function gotGesture(d) {
     }
   }
   g.flip(1);
+  */
 }
-
+Bangle.setCompassPower(1);
 Bangle.on('gesture',gotGesture);
 ```
 
